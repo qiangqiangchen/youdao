@@ -1,0 +1,6 @@
+[sɪŋ]http://dict.youdao.com/dictvoice?audio=sing&type=2['作为不及物动词有. 唱歌；歌颂；鸣叫；呼号，的意思', '作为及物动词有. 唱；用诗赞颂；唱着使，的意思', '作为名词有. 演唱；鸣声；呼啸声，的意思', '作为名词有. (Si作为名词有g)人名；(老、德、泰)辛，的意思']sing a song	唱一首歌，唱支歌
+sing out	大声喊出；向法院或警方自供
+sing on	唱下去
+sing small	(失败、受挫折后)变得老实，变得沉默寡言
+sing up	v. 更用力地唱；使劲唱
+[{'example': 'Why do you sing with me at all?', 'fanyi': '那你又为何要和我歌唱呢？', 'sent_voice': 'http://dict.youdao.com/dictvoice?audio=Why+do+you+sing+with+me+at+all%3F&le=eng'}, {'example': 'Do you sing for me?', 'fanyi': '你可是在为我而歌唱？', 'sent_voice': 'http://dict.youdao.com/dictvoice?audio=Do+you+sing+for+me%3F&le=eng'}, {'example': 'Where do you sing?', 'fanyi': '你在哪里唱歌啊？', 'sent_voice': 'http://dict.youdao.com/dictvoice?audio=Where+do+you+sing%3F&le=eng'}]
