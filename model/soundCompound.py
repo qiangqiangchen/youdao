@@ -37,7 +37,7 @@ def fenjie(word):
     word_list=[]
     for i in word:
         word_list.append(AudioSegment.from_mp3('./basevoice/{}.mp3'.format(i)))
-    fenjie=voiceOperate.addVoice(word_list)++voiceOperate.makeSilentVoice(1000)
+    fenjie=voiceOperate.addVoice(word_list)+voiceOperate.makeSilentVoice(1000)
     return fenjie
 
 

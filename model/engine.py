@@ -14,7 +14,7 @@ def cixingTransition(sent):
     elif cixing=="pron":
         return sent.replace(cixing, "作为代词有")+"，的意思"
     elif cixing=="adj":
-        return sent.replace(cixing, "作为形容有")+"，的意思"
+        return sent.replace(cixing, "作为形容词有")+"，的意思"
     elif cixing=="num":
         return sent.replace(cixing, "作为数词有")+"，的意思"
     elif cixing=="v":
