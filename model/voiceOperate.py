@@ -25,7 +25,7 @@ def addVoice(v_list):
     for sound in v_list:
         sound=changeDb(sound)
         playlist+=sound
-    return len(playlist),playlist
+    return playlist
 
 
 def getSoundDb(sound):

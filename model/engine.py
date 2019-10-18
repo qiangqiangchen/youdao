@@ -81,7 +81,7 @@ def pageOpear(word):
         wordGroup_str=[]
         for wordG in wordGroup:
             # print(wordG.span.a.get_text())
-            wordGroup_str.append(wordG.get_text("\n",strip=True))
+            wordGroup_str.append(wordG.get_text(",",strip=True))
 
         result["wordGroup_str"]=wordGroup_str
     except:
@@ -118,8 +118,9 @@ def pageOpear(word):
 
 if __name__=='__main__':
     r=pageOpear('about')
-    with open('test.txt', 'w',encoding='utf-8') as f:
-        f.write(str(r))
+    print(r)
+    # with open('test.txt', 'w',encoding='utf-8') as f:
+    #     f.write(str(r))
 
 
 
