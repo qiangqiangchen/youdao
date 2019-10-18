@@ -48,10 +48,7 @@ def getHtml(url):
         return rep
     return None
 
-def getfayin(url,filename):
-    res=getHtml(url)
-    with open(filename,'wb') as f:
-        f.write(res.content)
+
 
 def pageOpear(word):
     result={}
@@ -59,7 +56,8 @@ def pageOpear(word):
     base_url='http://dict.youdao.com/w/'
     response=getHtml(base_url+word)
     if not response:
-        pass
+        return None
+    result["word"] = word
     soup = BeautifulSoup(response.text, features="html.parser")
 
     #音标和发音
@@ -80,10 +78,10 @@ def pageOpear(word):
     #短语
     try:
         wordGroup=soup.find(name="div",attrs={"id":"wordGroup"}).find_all('p')
-        wordGroup_str=""
+        wordGroup_str=[]
         for wordG in wordGroup:
             # print(wordG.span.a.get_text())
-            wordGroup_str+=(wordG.get_text("\t",strip=True)+"\n")
+            wordGroup_str.append(wordG.get_text("\n",strip=True))
 
         result["wordGroup_str"]=wordGroup_str
     except:
@@ -119,10 +117,9 @@ def pageOpear(word):
 
 
 if __name__=='__main__':
-    r=pageOpear('sing')
+    r=pageOpear('about')
     with open('test.txt', 'w',encoding='utf-8') as f:
-        for i in r.values():
-            f.write(str(i))
+        f.write(str(r))
 
 
 

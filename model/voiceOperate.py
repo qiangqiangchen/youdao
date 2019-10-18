@@ -23,8 +23,9 @@ def makeSilentVoice(duration):
 def addVoice(v_list):
     playlist=AudioSegment.empty()
     for sound in v_list:
+        sound=changeDb(sound)
         playlist+=sound
-    return playlist
+    return len(playlist),playlist
 
 
 def getSoundDb(sound):
@@ -48,10 +49,12 @@ def save(sound,filename):
 
 
 if __name__=="__main__":
-    filepath=r"E:\BaiduNetdiskDownload\逼哥牛逼\专辑系列\专辑系列\108 个关键词 2012 Live\阿兰.mp3"
+    filepath=r"F:\26个英文字母及对应发音.mp3"
     sound=AudioSegment.from_mp3(filepath)
-
-    save(changeDb(sound),'test2.mp3')
+    num_1=25500+500
+    sound=sound[num_1:num_1+800]
+    save(sound,'c.mp3')
+    print(len(sound))
 
 
 
