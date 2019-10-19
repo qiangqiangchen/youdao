@@ -4,6 +4,7 @@ import os
 from pydub import AudioSegment
 from model import soundCompound
 from model import engine, voiceOperate
+from model.engine import pageOpear
 from model.soundCompound import fenjie
 
 """
@@ -39,37 +40,42 @@ def lrcFormat(starttime,txt):
     return "[{}:{}]{}".format(m,s,txt)
 
 
-def part1(temp):
+def part1(temp,starttime=0):
+    print(starttime)
     audio_list=[]
     lrc_txt=[]
-    lrc_time_current=0
+    lrc_time_current=starttime
     #第一部分
     word=temp["word"]
     #获取读音加入列表
     word_sound=soundCompound.getVoiceByYoudao(temp["voice_path"])
-    lrc_time_current += len(word_sound)
+
     lrc_txt.append(lrcFormat(lrc_time_current,word+"  "+temp["phonetic_USA"]))
+    lrc_time_current += len(word_sound)
     audio_list.append(word_sound)
     #获取分解读音并加入列表
     word_fenjie=soundCompound.fenjie(word)
     audio_list.append(word_fenjie)
-    lrc_time_current +=len(word_fenjie)
+
     lrc_txt.append(lrcFormat(lrc_time_current, word+"  "+temp["phonetic_USA"]))
+    lrc_time_current += len(word_fenjie)
     #再加1遍读音
     audio_list.append(word_sound)
-    lrc_time_current += len(word_sound)
+
     lrc_txt.append(lrcFormat(lrc_time_current,word+"  "+temp["phonetic_USA"]))
+    lrc_time_current += len(word_sound)
     #获取翻译语音并加入列表
     for i in temp["trans_str"]:
         trans=soundCompound.getVoiceByBaidu(i)
         audio_list.append(trans)
-        lrc_time_current += len(trans)
         lrc_txt.append(lrcFormat(lrc_time_current, i))
+        lrc_time_current += len(trans)
 
     # 再加2遍读音
     audio_list.append(word_sound*2)
-    lrc_time_current += len(word_sound*2)
+
     lrc_txt.append(lrcFormat(lrc_time_current, word + temp["phonetic_USA"]))
+    lrc_time_current += len(word_sound * 2)
 
 
     #第二部分
@@ -77,8 +83,8 @@ def part1(temp):
     for j in temp["wordGroup_str"]:
         wordGroup=soundCompound.getVoiceByBaidu(j)
         audio_list.append(wordGroup*2)
-        lrc_time_current += len(wordGroup*2)
         lrc_txt.append(lrcFormat(lrc_time_current, j))
+        lrc_time_current += len(wordGroup * 2)
 
     #加个1秒间隔
     audio_list.append(voiceOperate.makeSilentVoice(1000))
@@ -89,25 +95,40 @@ def part1(temp):
     for k in temp["examples"]:
         sent=soundCompound.getVoiceByYoudao(k["sent_voice"])
         audio_list.append(sent*2)
-        lrc_time_current += len(sent * 2)
         lrc_txt.append(lrcFormat(lrc_time_current, k["example"]))
+        lrc_time_current += len(sent * 2)
         fanyi=soundCompound.getVoiceByBaidu(k['fanyi'])
         audio_list.append(fanyi)
-        lrc_time_current += len(fanyi * 2)
         lrc_txt.append(lrcFormat(lrc_time_current,k['fanyi']))
+        lrc_time_current += len(fanyi)
 
 
-    voiceOperate.save(voiceOperate.addVoice(audio_list),"temp.mp3")
-    for line in lrc_txt:
-        print(line)
+    # voiceOperate.save(voiceOperate.addVoice(audio_list),"temp.mp3")
+    return voiceOperate.addVoice(audio_list),lrc_time_current,lrc_txt
 
 
+def comp(word_list):
+    start_time=0
+    lrc_list=[]
+    audio_list=[]
+    for i in word_list:
+        print("正在爬取{}".format(i))
+        r=pageOpear(i)
+        audio,lrc_time,lrc_txt=part1(r,start_time)
+        start_time+=len(audio)
+        audio_list.append(audio)
+        lrc_list+=lrc_txt
+
+    voiceOperate.save(voiceOperate.addVoice(audio_list),"test1.mp3")
+    print(start_time)
+    with open("test1.txt","w",encoding="utf-8") as f:
+        f.write("\n".join(lrc_list))
 
 
 
 
 
 if __name__=='__main__':
-    temp={'word': 'about', 'phonetic_USA': '[əˈbaʊt]', 'voice_path': 'http://dict.youdao.com/dictvoice?audio=about&type=2', 'trans_str': ['作为副词有. 大约；将近；到处；（特定位置）四下；闲着；周围；掉头，的意思', '作为介词有. 关于；目的是；针对；忙于；因为；在……到处；在……四处；在……附近；在……（具有某种品质）；围绕；为……感到，的意思', '作为形容有. 在场的，可得到的；就要……的；四处走动的；有证据的，在起作用的，的意思', '作为名词有. (About) （法、印、美）阿布（人名），的意思'], 'wordGroup_str': ['how about,你认为…怎样', 'what about,怎么样；（对于）…怎么样', 'all about,到处，各处；关于…的一切', 'about us,关于我们；公司简介', 'do about,处理；应付；就某事采取行动或措施', 'go about,v. 着手做；四处走动；传开；从事', 'about to do,刚要；即将', 'about of,打算；即将', 'out and about,能够外出走动', 'up and about,（病人病情好转）起床走动', 'on or about,大约于…'], 'examples': [{'example': 'Then he enquired everything about her.', 'fanyi': '然后他打听有关她的一切。', 'sent_voice': 'http://dict.youdao.com/dictvoice?audio=Then+he+enquired+everything+about+her.&le=eng'}, {'example': 'Do you have anything to say about this?', 'fanyi': '有关这件事你有没有什么要说的？', 'sent_voice': 'http://dict.youdao.com/dictvoice?audio=Do+you+have+anything+to+say+about+this%3F&le=eng'}, {'example': 'Curiosity. Why do you have curiosity about me?', 'fanyi': '好奇心。你们为什么对我有好奇心？', 'sent_voice': 'http://dict.youdao.com/dictvoice?audio=Curiosity.+Why+do+you+have+curiosity+about+me%3F&le=eng'}]}
-    part1(temp)
-
+    words=["abandon","absent","absolute","absorb","abuse"]
+    comp(words)
+    print("合成完成")

@@ -1,4 +1,12 @@
 # -*- coding:utf-8 -*-
+import math
+
+import multiprocessing
+
+import os
+
+import time
+from bs4 import BeautifulSoup
 from pydub import AudioSegment
 
 from model.engine import getHtml
@@ -52,7 +60,39 @@ def demo2():
     print(new.duration_seconds)
     # new.export("new.mp3",format="mp3")
 
+def demo3():
+    base_url="https://www.shanbay.com/wordlist/3127/26842/?page={}"
+    base_url_list=[base_url.format(i) for i in range(1,50)]
+    word_list=[]
+    for i in base_url_list:
+        res=getHtml(i)
+        soup = BeautifulSoup(res.text, features="html.parser")
+        words=soup.find_all(name="td", attrs={"class":"span2"})
+        # print(len(words))
+        for word in words:
+            word_list.append(word.strong.get_text())
+    print(len(word_list))
+    with open("words.txt","w") as f:
+        f.write(",".join(word_list))
+
+
+def print_word(list):
+    for i in list:
+        print("{}进程输出:{}".format(os.getpid(),i))
+        time.sleep(1)
+
+
+def demo4():
+    words = ["abandon", "absent", "absolute", "absorb", "abuse","academic","accept","accident","accompany",
+             "accomplish","account","accumulate","accurate"]
+    pool = multiprocessing.Pool(3)
+    for i in range(math.ceil(len(words)//5)+1):
+        # print(words[i*5:i*5+5])
+        pool.apply_async(print_word, (words[i*5:i*5+5],))
+    pool.close()
+    pool.join()
+
 
 
 if __name__ == "__main__":
-    demo1()
+    demo4()
