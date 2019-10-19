@@ -1,5 +1,5 @@
 # -*- coding:utf-8 -*-
-
+import time
 from aip import AipSpeech
 from pydub import AudioSegment
 
@@ -9,12 +9,14 @@ from model.engine import getHtml
 
 
 def getVoiceByBaidu(word,filename="./temp/fanyi.mp3"):
+    time.sleep(0.2)
     """ 你的 APPID AK SK """
     APP_ID = '9998866'
     API_KEY = 'C4VUcZCpy4hpSyP4zEAC7GMF'
     SECRET_KEY = '0800e45aca7c8bfafabadea8deb93762'
 
     client = AipSpeech(APP_ID, API_KEY, SECRET_KEY)
+
     result = client.synthesis(word, 'zh', 1, {
         'vol': 5,'per':1,
     })
