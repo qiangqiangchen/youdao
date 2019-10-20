@@ -1,6 +1,9 @@
 # -*- coding:utf-8 -*-
 import os
 
+import multiprocessing
+
+import math
 from pydub import AudioSegment
 from model import soundCompound
 from model import engine, voiceOperate
@@ -41,7 +44,7 @@ def lrcFormat(starttime,txt):
 
 
 def part1(temp,starttime=0):
-    print(starttime)
+    # print(starttime)
     audio_list=[]
     lrc_txt=[]
     lrc_time_current=starttime
@@ -107,28 +110,39 @@ def part1(temp,starttime=0):
     return voiceOperate.addVoice(audio_list),lrc_time_current,lrc_txt
 
 
-def comp(word_list):
+def comp(word_list,filename):
+    print("进程{}正在爬取{}".format(os.getpid(),",".join(word_list)))
+    with open("log.txt","w+") as f:
+        f.write(",".join(word_list))
     start_time=0
     lrc_list=[]
     audio_list=[]
     for i in word_list:
-        print("正在爬取{}".format(i))
         r=pageOpear(i)
         audio,lrc_time,lrc_txt=part1(r,start_time)
         start_time+=len(audio)
         audio_list.append(audio)
         lrc_list+=lrc_txt
 
-    voiceOperate.save(voiceOperate.addVoice(audio_list),"test1.mp3")
-    print(start_time)
-    with open("test1.txt","w",encoding="utf-8") as f:
+    voiceOperate.save(voiceOperate.addVoice(audio_list),"./word/{}.mp3".format(filename))
+    with open("./word/{}.lrc".format(filename),"w",encoding="utf-8") as f:
         f.write("\n".join(lrc_list))
+    print("{} is save succeed".format(filename))
 
 
-
+def muti_run():
+    #获取单词词库
+    with open("./words.txt", 'r') as f:
+        word_list=f.read().split(",")
+    #多进程执行
+    pool = multiprocessing.Pool(3)
+    for i in range(math.ceil(len(word_list) // 5) + 1):
+        filename="word_List{}".format(i+1)
+        pool.apply_async(comp, (word_list[i * 5:i * 5 + 5],filename))
+    pool.close()
+    pool.join()
 
 
 if __name__=='__main__':
-    words=["abandon","absent","absolute","absorb","abuse"]
-    comp(words)
+    muti_run()
     print("合成完成")
